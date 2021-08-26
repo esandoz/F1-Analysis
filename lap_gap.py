@@ -11,7 +11,7 @@ import fastf1
 import fastf1.plotting
 from fastf1.core import Laps
 
-yeartoanalyze = 2021
+yeartoanalyze = 2020
 
 fastf1.Cache.enable_cache('TestCache')  # replace with your cache directory
 
@@ -25,12 +25,14 @@ data = {'Year':listyear, 'NumRaces':numraces}
 year_ref = pd.DataFrame(data)
 year_ref = year_ref.set_index('Year')
 num_of_races_in_the_season = year_ref.loc[yeartoanalyze][0]
-
+countiter = 0
 ##############################################################################
 # get all races in a season, some seasons have fewer than 
+specrace=14
 for i in range(num_of_races_in_the_season):
+    
     try:
-        quali = fastf1.get_session(yeartoanalyze, i, 'Q')
+        quali = fastf1.get_session(yeartoanalyze, i+1, 'Q')
     except LookupError:
         print("ended on race # "+str(i+1))
         break
@@ -82,14 +84,14 @@ for i in range(num_of_races_in_the_season):
     selected_columns=fastest_laps[["Team","LapTimeDeltaSec"]]
     race_add = selected_columns.copy()
     race_add = race_add.set_index("Team")
-    race_add = race_add.rename(columns={"LapTimeDeltaSec":str(i)})
+    race_add = race_add.rename(columns={"LapTimeDeltaSec":str(i+1)})
     
-    if i == 0:
+    if countiter == 0:
         lap_delta_by_race = race_add.copy()
     else:
-        lap_delta_by_race = pd.concat([lap_delta_by_race, race_add],axis=1)
+        lap_delta_by_race = pd.concat([lap_delta_by_race, race_add.copy()],axis=1)
     
-        
+    countiter = countiter+1    
     ##############################################################################
     # We can take a quick look at the laps we have to check if everything
     # looks all right. For this, we'll just check the 'Driver', 'LapTime'
