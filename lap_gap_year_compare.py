@@ -152,22 +152,31 @@ for tms in total_delta_stats.index:
 ##############################################################################
 
 def plotdelta_season(total_delta_stats, team_colors, listyearnew):
+    team_colors = list()
+    total_delta_stats = total_delta_stats.sort_values(total_delta_stats.columns[-2])
+    for tms in total_delta_stats.index:
+        color = fastf1.plotting.team_color(tms)
+        if tms == 'Haas F1 Team':
+            color = 'k'
+        team_colors.append(color)
     fig, ax = plt.subplots()
     average_lap_delta = total_delta_stats[total_delta_stats.columns[::2]]
     std_lap_delta = total_delta_stats[total_delta_stats.columns[1::2]]
     for tms in range(len(total_delta_stats.index)):
         plt.plot(listyearnew, average_lap_delta.iloc[tms], 'o-', color = team_colors[tms], label = total_delta_stats.index[tms])
-        label = total_delta_stats.index[tms]
-        plt.annotate(label, # this is the text
-                 (listyearnew[-1],average_lap_delta.iloc[tms][-1]), # these are the coordinates to position the label
-                 textcoords="offset points", # how to position the text
-                 xytext=(25,0), # distance from text to points (x,y)
-                 color = team_colors[tms],
-                 ha='left') # horizontal alignment can be left, right or center
-    #plt.errorbar(listyearnew, average_lap_delta.iloc[tms], yerr = std_lap_delta.iloc[tms], fmt="o")
-
+        # label = total_delta_stats.index[tms]
+        # plt.annotate(label, # this is the text
+        #           (listyearnew[-1],average_lap_delta.iloc[tms][-1]), # these are the coordinates to position the label
+        #           textcoords="offset points", # how to position the text
+        #           xytext=(25,0), # distance from text to points (x,y)
+        #           color = team_colors[tms],
+        #           ha='left') # horizontal alignment can be left, right or center
+        #plt.errorbar(listyearnew, average_lap_delta.iloc[tms], yerr = std_lap_delta.iloc[tms], fmt="o", color = team_colors[tms])
+    plt.legend(total_delta_stats.index, title=str(listyearnew[-1])+' Standings', bbox_to_anchor=(1.05, 1), loc='upper left', )
     plt.xlabel('Formula 1 Season')
     plt.ylabel('\u0394 Lap Time (s)')
+    plt.title('Alpine = Renault, \n Aston Martin = Racing Point = Force India, \n  AlphaTauri = Toro Rosso, \n Alfa Romeo = Sauber')
+    #plt.ylim(0,4)
     ax.set_xticks(listyearnew)
     plt.gca().invert_yaxis()
     
